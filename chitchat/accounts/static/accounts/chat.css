@@ -1,0 +1,108 @@
+*{
+    background-color: rgb(48, 47, 47);
+
+}
+.head{
+    display: flex;
+    align-items: center;
+    
+}
+.profile{
+    width: 40px;
+    height: 40px;
+    border-radius: 100px;
+}
+.person{
+    color: white;
+    margin-left: 20px;
+    font-weight: 200;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.messages-type{
+    display: flex;
+    position: fixed;
+    top: 92%;
+    left: 38%;
+    align-items: center;
+    gap: 10px;
+}
+.messages-new{
+     width: 300px;
+    height: 30px;
+    background-color: rgb(255, 252, 252);
+    border-radius: 20px;
+    outline: none;
+    border: none;
+    font-size: large;
+    caret-color: rgb(77, 77, 77);
+    padding-inline: 10px;
+    caret-shape: block;
+}
+
+.message-button{
+    width: 40px;
+    height: 40px;
+    background-color: rgb(145, 145, 145);
+    border: none;
+    border-radius: 40px;
+    color: #ffffff;
+    
+
+}
+.message-button:hover{
+  cursor: pointer;
+  background: #000;
+
+}
+.message-box{
+    position: fixed;
+    background-color: #ffffff;
+    top: 20%;
+    left: 36%;
+    width: 400px;
+    height: 500px;
+    border-radius: 20px;
+    display: flex;
+     flex-direction: column;
+     overflow-y: auto;
+    
+}
+.users{
+  background-color: #5e5b5b;
+ 
+   align-self: flex-end; 
+   margin-right: 5px;
+   width: fit-content;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  color: #ffffff;
+  font-weight: lighter;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.other{
+  background-color: #443636;
+  margin-left: 5px;
+  width: fit-content;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  color: #ffffff;
+  font-weight: 200;
+  padding: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+ 
+}
+
+
+
+.online-show {
+     /* content ke andar center */
+  color: #00ff88;
+  background-color: #000;
+  width: fit-content;
+  padding: 10px;
+  border-radius: 10px;
+  margin: 0 auto;             /* ← parent ke andar horizontally center karta hai */
+}

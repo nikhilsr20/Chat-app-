@@ -1,10 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse,HttpResponseRedirect
 from django.contrib.auth import login
 from .forms import Register,Auth,Chatmessagecreateform
 from django.contrib.auth.forms import AuthenticationForm
 from .models import *
 from django.contrib.auth.decorators import login_required
+from django.template.loader import render_to_string
 
 # Create your views here.
 def registration(request):
@@ -38,28 +39,29 @@ def loginuser(request):
 @login_required
 def bodymessage(request):
     chat_group = get_object_or_404(Chatgroup, group_name="public-chat")
-    if request.htmx:
+
+    if request.method == "POST":
         form = Chatmessagecreateform(request.POST)
-        print("POST data:", request.POST)    
+        print("POST data:", request.POST)
         if form.is_valid():
             message = form.save(commit=False)
             message.author = request.user
             message.group = chat_group
             message.save()
-            # don't redirect — re-render with fresh form+messages
-            print("Saved message id:", message.pk) 
-            context={
-                'message':message,
-                'user':request.user
-            }
+            print("Saved message id:", message.pk)
 
-            return render(request,'accounts/partial/chatnew.html',context)
-        else:
-            print("FORM INVALID:", form.errors)   
-    else:
-        form = Chatmessagecreateform()
+            # detect HTMX
+            is_htmx = getattr(request, "htmx", False) or request.headers.get("HX-Request") == "true"
 
-        messages = chat_group.chat_messages.all()[:30]
-    return render(request, "accounts/chat.html", {'messages': messages,'form': form,})
+            if is_htmx:
+                # return only the fragment for the single message
+                html = render_to_string("accounts/partial/chatnew.html",
+                                        {"message": message, "user": request.user},
+                                        request=request)
+                return HttpResponse(html, status=200)
+            return HttpResponseRedirect(request.path)
 
-
+    # GET: show messages oldest -> newest so that hx-swap="beforeend" appends at bottom
+    form = Chatmessagecreateform()
+    messages = chat_group.chat_messages.all().order_by('created')[:300]  # adjust limit as needed
+    return render(request, "accounts/chat.html", {"messages": messages, "form": form})

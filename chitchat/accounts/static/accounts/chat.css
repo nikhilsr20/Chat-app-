@@ -80,7 +80,9 @@
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-left-radius: 10px;
+  
 }
+
 .other{
   background-color: #443636;
   margin-left: 5px;
@@ -106,3 +108,4 @@
   border-radius: 10px;
   margin: 0 auto;             /* ← parent ke andar horizontally center karta hai */
 }
+

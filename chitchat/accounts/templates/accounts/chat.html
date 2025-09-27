@@ -10,7 +10,7 @@
     <div>
         <div class="head">
     <img class="profile" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNfTkosk_XISYGUe8YAUWMrv0kcP5a4YMcVQ&s" alt="Profile picture" />
-        <h1 class="person">Nikhil Singh Rathore</h1>
+        <h1 class="person">{{request.user.username}}</h1>
        </div>
        <hr>
        <div class="online-show">Online 2</div>
@@ -22,9 +22,8 @@
         
         <form method="post"
           action="{% url 'bodymessage' %}"
-          hx-post="{% url 'bodymessage' %}"
-          hx-target="#messages"
-          hx-swap="beforeend"
+          hx-ext="ws"
+          ws-connect="/ws/chatroom/public-chat"
           hx-trigger="submit"
           class="messages-type">
       {% csrf_token %}
@@ -34,6 +33,7 @@
   </div>
 
   <script src="https://unpkg.com/htmx.org@1.9.4"></script>
+  <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 
   <script>
     // debug

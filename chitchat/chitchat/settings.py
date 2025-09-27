@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,7 +70,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chitchat.wsgi.application'
+# WSGI_APPLICATION = 'chitchat.wsgi.application'
+ASGI_APPLICATION = 'chitchat.asgi.application'
 
 
 # Database

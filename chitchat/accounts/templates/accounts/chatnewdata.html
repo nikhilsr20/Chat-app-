@@ -4,4 +4,35 @@
 <h3 class="other">{{message.body}}</h3>
 {% endif %}
 
+<style>
+    .users{
+    animation: for-user 0.6s ease;
+}
 
+@keyframes for-user {
+    0%{
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    
+    100%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+.other{
+    animation: for-other 0.6s ease;
+}
+
+@keyframes for-other {
+    0%{
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    
+    100%{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+</style>

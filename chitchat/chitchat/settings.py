@@ -40,7 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'django_htmx', 
+    "channels"
 ]
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,7 +77,7 @@ TEMPLATES = [
 ]
 
 # WSGI_APPLICATION = 'chitchat.wsgi.application'
-ASGI_APPLICATION = 'chitchat.asgi.application'
+ASGI_APPLICATION = "chitchat.asgi.application"
 
 
 # Database

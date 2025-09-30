@@ -24,7 +24,9 @@
           action="{% url 'bodymessage' %}"
           hx-ext="ws"
           ws-connect="/ws/chatroom/public-chat"
+          ws-send
           hx-trigger="submit"
+          _="on htmx:wsAfterSend reset() me"
           class="messages-type">
       {% csrf_token %}
       {{ form.body }}
@@ -35,22 +37,86 @@
   <script src="https://unpkg.com/htmx.org@1.9.4"></script>
   <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 
-  <script>
-    // debug
-    console.log('htmx present?', typeof htmx !== 'undefined');
+<script>
 
-    // on successful swap: clear input and scroll to bottom
-    document.body.addEventListener('htmx:afterSwap', function(e){
-      const input = document.querySelector('input[name="body"], textarea[name="body"]');
-      if (input) input.value = '';
-      const msgs = document.getElementById('messages');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
-    });
+  function scrollMessages(smooth = true) {
+    const msgs = document.getElementById('messages');
+    if (!msgs) return;
+  
+    try {
+     msgs.scrollTo({
+      top:msgs.scrollHeight,
+      behavior:smooth? 'smooth':'auto',
+     }
+     )
+    } catch (err) {
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+  }
 
-    // optional: when the page first loads, scroll to bottom
-    window.addEventListener('load', function(){ 
-      const msgs = document.getElementById('messages');
-      if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  // ensure input clear (defensive)
+  function clearInput() {
+    const input = document.querySelector('input[name="body"], textarea[name="body"]');
+    if (input) input.value = '';
+  }
+
+  // robust handler: wait a frame then scroll. If nothing changed, observer will do it.
+  function handleMaybeNewMessage() {
+    // quick micro-wait to ensure HTMX has inserted nodes
+    requestAnimationFrame(() => {
+      // also allow one more micro-delay for OOB insertions
+      setTimeout(() => {
+        scrollMessages(true);
+      }, 10);
     });
-  </script>
+  }
+
+  // MutationObserver fallback (watches #messages for new children)
+  (function setupObserver() {
+    const msgs = document.getElementById('messages');
+    if (!msgs) return;
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        if (m.addedNodes && m.addedNodes.length) {
+          // new node(s) added -> scroll to bottom
+          scrollMessages(true);
+          break;
+        }
+      }
+    });
+    observer.observe(msgs, { childList: true, subtree: false });
+    // optional: store on element so we don't create duplicates
+    msgs.__htmx_observer = observer;
+  })();
+
+  // Handle HTMX regular swaps and HTMX WS swaps
+  function htmxSwapHandler(e) {
+    // clear input always when a swap related to messages happens
+    clearInput();
+
+    // If the target is messages or we use OOB, schedule scroll
+    // (We don't rely on e.detail.target to exactly equal messages because OOB behavior varies)
+    handleMaybeNewMessage();
+  }
+
+  // Listen to both events: normal afterSwap and ws-specific afterSwap
+  document.body.addEventListener('htmx:afterSwap', htmxSwapHandler);
+  document.body.addEventListener('htmx:wsAfterSwap', htmxSwapHandler); // in case ws ext fires this
+
+  // If you prefer to react immediately after send as well (clear input)
+  document.body.addEventListener('htmx:afterSend', clearInput);
+  document.body.addEventListener('htmx:wsAfterSend', clearInput);
+
+  // Initial page load scroll
+  window.addEventListener('load', function() {
+    // small timeout to allow initial server-rendered messages
+    setTimeout(scrollMessages, 50);
+  });
+
+  // Debug helpers — uncomment if you want console traces
+  // document.body.addEventListener('htmx:afterSwap', e => console.log('afterSwap', e.detail));
+  // document.body.addEventListener('htmx:wsAfterSwap', e => console.log('wsAfterSwap', e.detail));
+  // document.body.addEventListener('htmx:afterSend', e => console.log('afterSend', e.detail));
+  // document.body.addEventListener('htmx:wsAfterSend', e => console.log('wsAfterSend', e.detail));
+</script>
 </html>

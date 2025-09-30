@@ -20,7 +20,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chitchat.settings')
 
 django_asgi_app = get_asgi_application()
 
-
 from accounts import routing
 
 application = ProtocolTypeRouter({

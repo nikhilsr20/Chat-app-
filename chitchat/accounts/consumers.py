@@ -18,9 +18,11 @@ class ChatroomConsumer(WebsocketConsumer):
             self.channel_name
         )
         
-        if self.user not in self.chatroom.users_online.all():
-            self.chatroom.users_online.add(self.user)
-            self.update_online_count()
+        if self.user.is_authenticated:
+            # check by pk to avoid passing UserLazyObject
+            if not self.chatroom.users_online.filter(pk=self.user.pk).exists():
+                self.chatroom.users_online.add(self.user.pk)
+                self.update_online_count()
 
         self.accept()
 
@@ -30,9 +32,10 @@ class ChatroomConsumer(WebsocketConsumer):
             self.chatroom_name,
             self.channel_name
         )
-        if self.user in self.chatroom.users_online.all():
-            self.chatroom.users_online.remove(self.user)
-            self.update_online_count()
+        if getattr(self, "user", None) and self.user.is_authenticated:
+            if self.chatroom.users_online.filter(pk=self.user.pk).exists():
+                self.chatroom.users_online.remove(self.user.pk)
+                self.update_online_count()
 
 
      

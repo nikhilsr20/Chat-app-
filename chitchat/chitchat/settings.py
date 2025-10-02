@@ -42,9 +42,19 @@ INSTALLED_APPS = [
     'django_htmx', 
     "channels"
 ]
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#     },
+# }
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [('redis://default:zbnEQQPDtMvmmcueCwBUFJweyEfsEDxU@gondola.proxy.rlwy.net:44198')],
+        },
     },
 }
 

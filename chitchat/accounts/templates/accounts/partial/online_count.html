@@ -1,3 +1,35 @@
+{% if online_count > 0 %}
+  <div id="online-icon" class="green"></div>
+{% else %}
+  <div id="online-icon" class="gray"></div>
+{% endif %}
+
 <span id="online-show" hx-swap-oob="outerHTML">
-    {{ online_count }}
+  {{ online_count }} online
 </span>
+
+<style>
+  #online-show {
+    background-color: black;
+    color: white;         /* text visible ho jaye */
+    padding: 2px 6px;     /* thoda space mile */
+    border-radius: 4px;   /* halka rounded look */
+    font-size: 14px;
+  }
+
+  .green {
+    background: rgb(106, 240, 106);
+    border-radius: 50%;   /* 100px likhne ki zarurat nahi */
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+  }
+
+  .gray {
+    background: rgb(186, 186, 186);
+    border-radius: 50%;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+  }
+</style>
